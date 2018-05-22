@@ -26,7 +26,7 @@ fs = 250    # Sample frequence
 n_Channels=22
 n_Samples=500
 
-learning_rate = 1e-4    # Adam
+learning_rate = 1e-8    # Adam
 decay_steps = 1*(7*288//batch_size)   # 2592/batch_size为一个完整epoch所含的batch数量，1个epoch衰减一次
 optimizer = tf.train.AdamOptimizer
 
@@ -44,6 +44,7 @@ def train(X_inputs, labels, fold, batch_size, num_epochs, subj_id, learning_rate
     X_test = (X_test - X_mean)/X_std
 
     model = Model(batch_size, n_classes, dropout_rate, fs, n_Channels, n_Samples)
+    clip_all_weights = tf.get_collection('max-norm')    # max_norm
 
     with tf.name_scope('Optimizer'):
         # learning_rate = learning_rate_default * Decay_rate^(global_steps/decay_steps)
@@ -93,7 +94,7 @@ def train(X_inputs, labels, fold, batch_size, num_epochs, subj_id, learning_rate
     if not os.path.exists(checkpoint_dir):
         os.makedirs(checkpoint_dir)
 
-    saver = tf.train.Saver(tf.global_variables(), max_to_keep=5)
+    saver = tf.train.Saver(tf.global_variables(), max_to_keep=3)
 
     print("Starting training...")
     total_start_time = time.time()
@@ -112,6 +113,7 @@ def train(X_inputs, labels, fold, batch_size, num_epochs, subj_id, learning_rate
                 inputs, targets = batch
                 summary, _, pred, loss, acc = sess.run([train_summary_op, train_op, model.output, model._loss, model._acc], 
                     {model.X_inputs: inputs, model.y_inputs: targets, model.tf_is_training: True, model.tf_bn_training: True})
+                sess.run(clip_all_weights)  # max_norm
                 train_acc += acc
                 train_err += loss   # 累加计算总损失
                 train_batches += 1
@@ -148,7 +150,7 @@ def train(X_inputs, labels, fold, batch_size, num_epochs, subj_id, learning_rate
                 best_validation_accu = av_val_acc   # 即使用eraly_stoping的结果
                 test_acc_val = av_test_acc
                 # 保存效果较好的模型和参数  不同被试不同类型模式使用不同地址
-                saver.save(sess, checkpoint_prefix)
+                saver.save(sess, checkpoint_prefix, global_step=sess.run(global_steps))
 
         train_acc = train_batches = 0
         for batch in iterate_minibatches(X_train, y_train, batch_size, shuffle=False):  # shuffle不选true是因为生成序号时已打乱
@@ -182,6 +184,9 @@ def train_all_subject(num_epochs=1):
 
     EEGs, labels = load_data(file_path=file_path)
     EEGs = EEGs.reshape(-1, n_Channels, n_Samples, 1)
+    labels = labels.reshape(-1)
+    print(EEGs.shape)
+    print(labels.shape)
 
     print('*'*200)
     acc_buf = []
