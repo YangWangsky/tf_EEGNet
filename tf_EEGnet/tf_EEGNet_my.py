@@ -55,7 +55,6 @@ def EEGNet_Classifier(inputs, n_classes, Chans=64, Sample=128, dropoutRate=0.25,
     max_norm_reg = max_norm_regularizer(threshold=MAX_NORM, axes=3)
     Weight_depthwise = tf.get_variable('Weight_depthwise', [Chans, 1, F1, D],   # [filter_height, filter_width, in_channels, channel_multiplier].
             initializer=tf.glorot_uniform_initializer(), regularizer=max_norm_reg)
-    max_norm_reg(Weight_depthwise)
 
     ##################################################################
     inputs = tf.reshape(inputs, shape=[-1, Chans, Sample, 1], name='Reshape_for_input') # for 2D_conv channels_last
@@ -96,7 +95,7 @@ def EEGNet_Classifier(inputs, n_classes, Chans=64, Sample=128, dropoutRate=0.25,
 
 
 class Model(object):
-    def __init__(self, batch_size, n_classes=4, dropout=0.25, fs=250, n_Channels=22, n_Samples=500):
+    def __init__(self, batch_size, n_classes=4, dropout=0.25, fs=128, n_Channels=22, n_Samples=256):
         self.n_classes = n_classes
         self.dropout = dropout
         self.fs = fs    # sampling frequence
@@ -113,7 +112,7 @@ class Model(object):
         
         with tf.variable_scope('EEGNet'):
             self.output = EEGNet_Classifier(self.X_inputs, self.n_classes, self.n_Channels, self.n_Samples, 
-                        dropoutRate=self.dropout, kernLength=self.fs//4, training=self.tf_is_training,
+                        dropoutRate=self.dropout, kernLength=self.fs//2, training=self.tf_is_training,
                         bn_training=self.tf_bn_training)
         
         with tf.name_scope('Accuracy'):

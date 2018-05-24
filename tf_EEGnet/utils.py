@@ -34,7 +34,7 @@ def preprocessing_filter(file_path=file_path):
 
 
 def load_data(file_path):
-    file_path = file_path + '/preproc/data.mat'
+    file_path = file_path + '/preproc/data_128Hz.mat'
     print("Loading data from %s" % (file_path))
     dataMat = scipy.io.loadmat(file_path)
 

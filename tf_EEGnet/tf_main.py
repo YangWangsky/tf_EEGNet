@@ -22,9 +22,9 @@ file_path = '/mnt/disk1/HeHe/MI/'
 batch_size = 32
 dropout_rate = 0.5 # Dropout 的概率，输出的可能性
 n_classes = 4
-fs = 250    # Sample frequence
-n_Channels=22
-n_Samples=500
+fs = 128    # Sample frequence
+n_Channels = 22
+n_Samples = 256
 
 learning_rate = 1e-8    # Adam
 decay_steps = 1*(7*288//batch_size)   # 2592/batch_size为一个完整epoch所含的batch数量，1个epoch衰减一次
