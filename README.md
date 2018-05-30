@@ -47,7 +47,7 @@ tf_EEGNet did not have the ability to overfit on train set. After the unbalance_
     2. A 4-38Hz bandpass was done by a causal 6-order Butterworth fliter.
     3. No resampling.
 
-Got something hard to explanation.
+Got something hard to explain.
 
 | Result |  acc | mean |
 |---|---|---|
