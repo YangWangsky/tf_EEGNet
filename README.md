@@ -29,7 +29,7 @@ for more information see https://github.com/robintibor/braindevel
 
 tf_EEGNet just cannont converged on BCI_competion 2a even in the train set. And it would predit the same labels for all trials of test set and got a 25% acc.
 
-![avatar](./image/tensorboard_mi.png)
+![avatar](./image/tensorboard_MI.png)
 
 ### Preprocessing for P300
     Only resampling to 128Hz was done.
@@ -47,7 +47,7 @@ tf_EEGNet did not have the ability to overfit on train set. After the unbalance_
     2. A 4-38Hz bandpass was done by a causal 6-order Butterworth fliter.
     3. No resampling.
 
-Got something hard to explanation.
+Got something hard to explain.
 
 | Result |  acc | mean |
 |---|---|---|
