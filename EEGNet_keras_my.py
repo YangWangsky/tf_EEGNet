@@ -45,7 +45,7 @@ def EEGNet_Classifier_new(nb_classes, Chans = 64, Samples = 128, regRate = 0.000
 
     ##################################################################
     layer1       = Conv2D(numFilters, (1, kernLength), padding='same',            # temporal kernel
-                            kernel_constraint = maxnorm(MAX_NORM, axis=[1,2,3]),
+                            kernel_constraint = maxnorm(MAX_NORM, axis=[0,1,2]),
                             input_shape = (1, Chans, Samples),      # channels_first 
                             use_bias = False)(input1)               # output_size [F, C, T]
     layer1       = BatchNormalization(axis = 1)(layer1)             # bn_axis = 1 if K.image_data_format() == 'channels_first' else 3
