@@ -51,7 +51,7 @@ def EEGNet_Classifier_new(nb_classes, Chans = 64, Samples = 128, regRate = 0.000
     layer1       = BatchNormalization(axis = 1)(layer1)             # bn_axis = 1 if K.image_data_format() == 'channels_first' else 3
     layer1       = DepthwiseConv2D((Chans, 1), padding='valid',                     # spatial filters within each feature map
                             depth_multiplier=numSpatialFliters,
-                            depthwise_constraint = maxnorm(MAX_NORM, axis=[1,2,3]),
+                            depthwise_constraint = maxnorm(MAX_NORM, axis=[0,1,2]),
                             use_bias = False)(layer1)
     layer1       = BatchNormalization(axis = 1)(layer1)
     layer1       = Activation('elu')(layer1)                        # output_size [D*F, 1, T]
@@ -61,8 +61,8 @@ def EEGNet_Classifier_new(nb_classes, Chans = 64, Samples = 128, regRate = 0.000
 
     layer2       = SeparableConv2D(filters=numFilters*numSpatialFliters, padding='same',    # equal to DepthwiseConv2D + 1*1-conv2d
                             kernel_size=(1, 16), depth_multiplier=1,
-                            depthwise_constraint = maxnorm(MAX_NORM, axis=[1,2,3]),
-                            pointwise_initializer = maxnorm(MAX_NORM, axis=[1,2,3]),
+                            depthwise_constraint = maxnorm(MAX_NORM, axis=[0,1,2]),
+                            pointwise_initializer = maxnorm(MAX_NORM, axis=[0,1,2]),
                             use_bias = False)(layer1)
     layer2       = BatchNormalization(axis=1)(layer2)
     layer2       = Activation('elu')(layer2)                        # output_size [D*F, 1, T//4]
